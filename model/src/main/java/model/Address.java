@@ -1,4 +1,4 @@
-package com.bootcamp.customer.model;
+package model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -13,6 +13,5 @@ public class Address {
     private String number;
     private String town;
     private String state;
-    @OneToOne
-    private Customer customer;
+    private String customer_id;
 }

@@ -1,12 +1,18 @@
-package com.bootcamp.customer.model;
+package model;
+
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Customer {
+    final public static int SIN_PENDIENTES=1;
+    final public static int FACTURA_PENDIENTE=1;
+    final public static int IMPAGADO=1;
     @Id
     private String id;
     private String name;
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "address", cascade = CascadeType.ALL)
-    private Address address;
+    private String address_id;
+    @Transient
+    private List<Address> addressList;
 }
