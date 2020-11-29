@@ -56,4 +56,10 @@ public class BillController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/bills/{id}/{status}")
+    public ResponseEntity<Bill> findByCustomerAndStatus(@PathVariable("id") int customerId,
+                                                        @PathVariable("status") int status){
+        return billService.findByCustomerAndStatus(customerId,status);
+    }
+
 }

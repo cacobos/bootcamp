@@ -30,7 +30,7 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.findByState(state));
     }
 
-    @GetMapping("/customers/name/{state}")
+    @GetMapping("/customers/name/{name}")
     public ResponseEntity<List<Customer>> findByName(@PathVariable("name") String name){
         return ResponseEntity.ok(customerService.findByName(name));
     }

@@ -115,4 +115,8 @@ public class BillService {
     public Mono<Void> deleteById(String id){
         return billRepository.deleteById(id);
     }
+
+    public ResponseEntity<Bill> findByCustomerAndStatus(int customerId, int status) {
+        return billRepository.findByIdClienteAndStatus(customerId,status);
+    }
 }

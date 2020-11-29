@@ -23,7 +23,7 @@ public class VisitService {
     @Autowired
     EurekaClient eurekaClient;
 
-    @Scheduled(fixedDelay = 6000,initialDelay = 2000)
+    @Scheduled(fixedDelay = 30000,initialDelay = 2000)
     public void setVisitStatus(){
         System.out.println("***********Se actualiza el estado de las visitas");
         List<Visit> visitList=visitRepository.findByStatusOrStatusIsNull(0);

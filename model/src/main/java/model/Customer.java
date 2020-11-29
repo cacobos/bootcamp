@@ -15,6 +15,7 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private int status;
     @Transient
     private List<Address> addressList;
 }
