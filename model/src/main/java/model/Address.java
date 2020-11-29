@@ -1,11 +1,11 @@
 package model;
 
+import lombok.Data;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
-@Entity
+@Entity @Data
 public class Address {
     @Id
     private String id;
@@ -13,5 +13,5 @@ public class Address {
     private String number;
     private String town;
     private String state;
-    private String customer_id;
+    private String customerId;
 }

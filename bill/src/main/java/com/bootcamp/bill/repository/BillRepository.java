@@ -5,7 +5,10 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 public interface BillRepository extends ReactiveMongoRepository<Bill, String> {
-    Flux<Bill> findAll();
+    Mono<Bill> findOneByIdClienteAndStatus(String idCliente, int Status);
+
 
 }

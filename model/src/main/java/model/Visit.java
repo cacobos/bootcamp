@@ -1,19 +1,23 @@
 package model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import lombok.Data;
 
-@Entity
+import javax.persistence.*;
+import java.util.Date;
+
+@Entity @Data
 public class Visit {
-    public final static int FACTURADO=1;
-    public final static int NO_FACTURADO=2;
+    public final static int AGENDADA=1;
+    public final static int PENDIENTE_FACTURA=2;
+    public final static int FACTURADA=3;
     @Id
     private String id;
     private int status;
     private String remark;
-    @Column(name = "cliente_id")
-    private String idCliente;
-    @Column(name = "factura_id")
-    private String idFactura;
+    @Column(name = "customer_id")
+    private String idCustomer;
+    @Column(name = "bill_id")
+    private String idBill;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
 }
