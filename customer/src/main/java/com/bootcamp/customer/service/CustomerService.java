@@ -25,7 +25,7 @@ public class CustomerService {
         return customers;
     }
 
-    public Customer findById(String id){
+    public Customer findById(Long id){
         if(customerRepository.findById(id).isPresent()) {
             Customer customer = customerRepository.findById(id).get();
             customer.setAddressList(addressRepository.findByCustomerId(id));
@@ -35,7 +35,7 @@ public class CustomerService {
         }
     }
 
-    public Customer findByAddressId(String id){
+    public Customer findByAddressId(Long id){
         if(customerRepository.findByAddressId(id).isPresent()) {
             Customer customer = customerRepository.findByAddressId(id).get();
             customer.setAddressList(addressRepository.findByCustomerId(id));
@@ -60,8 +60,16 @@ public class CustomerService {
         return customerRepository.findByNameLike(name);
     }
 
-    public String getCustomerStatus(String customerId){
+    public String getCustomerStatus(Long customerId){
         Customer customer=findById(customerId);
         return "Hay que implementarlo!!";
+    }
+
+    public Customer save(Customer customer) {
+        return customerRepository.save(customer);
+    }
+
+    public void delete(Long id) {
+        customerRepository.deleteById(id);
     }
 }

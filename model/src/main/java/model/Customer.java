@@ -12,9 +12,9 @@ public class Customer {
     final public static int FACTURA_PENDIENTE=1;
     final public static int IMPAGADO=1;
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
-    private String addressId;
     @Transient
     private List<Address> addressList;
 }

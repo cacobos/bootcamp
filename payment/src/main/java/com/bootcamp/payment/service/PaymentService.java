@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.util.Date;
@@ -31,8 +32,20 @@ public class PaymentService {
         return paymentRepository.findByStatus(status);
     }
 
+    public Flux<Payment> findAll(){
+        return paymentRepository.findAll();
+    }
+
+    public Mono<Payment> insert(Payment payment) {
+        if(payment.getId()==null){
+            return paymentRepository.save(payment);
+        }
+        return null;
+    }
+
     @Scheduled(fixedDelay = 60000, initialDelay = 60000)
     public void scheduled(){
+        System.out.println("**********Se actualiza el estado de los pagos de las facturas*************");
         updatePaymentsStatus();
         //Actualizamos el status de cada factura en función de los pagos
         updateBillStatus();
@@ -40,11 +53,11 @@ public class PaymentService {
 
     private void updateBillStatus() {
         int nPagos=0;
-        Application a=eurekaClient.getApplication("VISITS");
+        Application a=eurekaClient.getApplication("VISIT");
         String url=a.getInstances().get((int)(Math.random()*a.getInstances().size())).getHomePageUrl();
         ResponseEntity<String> response
                 = new RestTemplate().getForEntity(url+"/visits/unbilled", String.class);
-        List<Bill> billList= JsonUtility.parseJSONList(response.getBody());
+        List<Bill> billList= JsonUtility.parseJSONList(response.getBody(), Bill[].class);
         for (Bill bill:billList) {
             Iterable<Payment> paymentFlux=paymentRepository.findByBillId(bill.getId()).toIterable();
             Iterator<Payment> it=paymentFlux.iterator();
@@ -66,7 +79,7 @@ public class PaymentService {
     }
 
     private void guardarBill(Bill bill) {
-        Application a=eurekaClient.getApplication("BILLS");
+        Application a=eurekaClient.getApplication("BILL");
         String url=a.getInstances().get((int)(Math.random()*a.getInstances().size())).getHomePageUrl();
         ResponseEntity<String> response
                 = new RestTemplate().postForEntity(url+"/bills", bill, String.class);
@@ -84,5 +97,6 @@ public class PaymentService {
             }
         }
     }
+
 
 }

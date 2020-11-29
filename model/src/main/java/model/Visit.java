@@ -11,7 +11,8 @@ public class Visit {
     public final static int PENDIENTE_FACTURA=2;
     public final static int FACTURADA=3;
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private int status;
     private String remark;
     @Column(name = "customer_id")

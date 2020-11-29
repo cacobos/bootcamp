@@ -22,7 +22,7 @@ public class Bill {
     @Column(precision = 2, length = 5)
     private float amount;
     private int payment;
-    private String idCliente;
+    private Long idCliente;
     private int status;
     private List<BillLine> billLines;
 }

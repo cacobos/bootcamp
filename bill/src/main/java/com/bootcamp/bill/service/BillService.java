@@ -13,8 +13,10 @@ import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,27 +51,32 @@ public class BillService {
     //De momento, creamos facturas cada minuto para poder probar
     @Scheduled(initialDelay = 12000, fixedDelay = 6000)
     public void facturar(){
-        Application a=eurekaClient.getApplication("CUSTOMERS");
+        System.out.println("****Se crean las facturas con las visitas pendientes*******");
+        Application a=eurekaClient.getApplication("CUSTOMER");
         String url=a.getInstances().get((int)(Math.random()*a.getInstances().size())).getHomePageUrl();
         ResponseEntity<String> response
                 = new RestTemplate().getForEntity(url+"/customers", String.class);
-        List<Customer> customerList= JsonUtility.parseJSONList(response.getBody());
-        for (int i = 0; i < customerList.size(); i++) {
-            createCustomerBill(customerList.get(i).getId());
+        if(response!=null) {
+            List<Customer> customerList = JsonUtility.parseJSONList(response.getBody(), Customer[].class);
+            for (int i = 0; i < customerList.size(); i++) {
+                createCustomerBill(customerList.get(i).getId());
+            }
         }
     }
 
 
 
-    private void createCustomerBill(String customerId) {
+    private void createCustomerBill(Long customerId) {
         float amount=0;
-        Application a=eurekaClient.getApplication("VISITS");
+        Application a=eurekaClient.getApplication("VISIT");
         String url=a.getInstances().get((int)(Math.random()*a.getInstances().size())).getHomePageUrl();
         ResponseEntity<String> response
                 = new RestTemplate().getForEntity(url+"/visits/unbilled", String.class, customerId);
-        List<Visit> visitList= JsonUtility.parseJSONList(response.getBody());
+        List<Visit> visitList= JsonUtility.parseJSONList(response.getBody(), Visit[].class);
+        System.out.println("Visitas: "+visitList.size());
         if(!visitList.isEmpty()) {
             Bill bill=new Bill();
+            bill.setBillLines(new ArrayList<>());
             bill.setIdCliente(customerId);
             bill.setPayment(((int)(Math.random()*3))+1);
             bill=billRepository.save(bill).block();
@@ -80,11 +87,14 @@ public class BillService {
                 billLine.setVisitId(visit.getId());
                 bill.getBillLines().add(billLine);
                 visit.setIdBill(bill.getId());
+                visit.setStatus(Visit.FACTURADA);
                 url = a.getInstances().get((int) (Math.random() * a.getInstances().size())).getHomePageUrl();
-                new RestTemplate().put(url + "/visits", visit, String.class, visit.getId());
+                new RestTemplate().put(url + "/visits/"+visit.getId(), visit);
             }
+            System.out.println("Líneas: "+bill.getBillLines().size());
             bill.setAmount(amount);
             bill=billRepository.save(bill).block();
+            System.out.println("Líneas: "+bill.getBillLines().size());
             for (int i = 0; i < bill.getPayment(); i++) {
                 Payment payment=new Payment();
                 payment.setBillId(bill.getId());
@@ -96,10 +106,9 @@ public class BillService {
     }
 
     private void savePayment(Payment payment) {
-        Application a=eurekaClient.getApplication("PAYMENTS");
+        Application a=eurekaClient.getApplication("PAYMENT");
         String url=a.getInstances().get((int)(Math.random()*a.getInstances().size())).getHomePageUrl();
-        ResponseEntity<String> response
-                = new RestTemplate().postForEntity(url+"/payments", payment, String.class);
+        new RestTemplate().postForEntity(url+"/payments", payment,String.class);
     }
 
 

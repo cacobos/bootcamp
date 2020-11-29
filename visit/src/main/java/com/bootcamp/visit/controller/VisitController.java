@@ -34,14 +34,15 @@ public class VisitController {
     @PostMapping("/visits")
     public ResponseEntity<Visit> insert(@RequestBody @Valid Visit visit){
         if(visit.getId()==null){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.ok(visitService.insert(visit));
         }
-        return ResponseEntity.ok(visitService.insert(visit));
+        return ResponseEntity.badRequest().build();
+
     }
 
     @PutMapping("visits/{id}")
     public ResponseEntity<Visit> update(@RequestBody @Valid Visit visit,
-                                        @PathVariable("id") String id){
+                                        @PathVariable("id") Long id){
         if(visitService.findById(id)!=null){
             visit.setId(id);
             return ResponseEntity.ok(visitService.update(visit));
@@ -50,7 +51,7 @@ public class VisitController {
     }
 
     @DeleteMapping("visits/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable("id") String id){
+    public ResponseEntity<String> deleteById(@PathVariable("id") Long id){
         if(visitService.findById(id)!=null) {
             return ResponseEntity.ok("Factura borrada con éxito");
         }

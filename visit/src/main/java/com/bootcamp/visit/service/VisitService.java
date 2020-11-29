@@ -23,11 +23,20 @@ public class VisitService {
     @Autowired
     EurekaClient eurekaClient;
 
-    @Scheduled(fixedDelay = 60000,initialDelay = 2000)
+    @Scheduled(fixedDelay = 6000,initialDelay = 2000)
     public void setVisitStatus(){
-        List<Visit> visitList=visitRepository.findByStatusAndDateBefore(Visit.AGENDADA, Date.from(Instant.now()));
+        System.out.println("***********Se actualiza el estado de las visitas");
+        List<Visit> visitList=visitRepository.findByStatusOrStatusIsNull(0);
+        System.out.println("Sin estado: "+ visitList.size());
+        for (int i = 0; i < visitList.size(); i++) {
+            visitList.get(i).setStatus(Visit.AGENDADA);
+            visitRepository.save(visitList.get(i));
+        }
+        visitList=visitRepository.findByStatusAndDateBefore(Visit.AGENDADA, Date.from(Instant.now()));
+        System.out.println("Fecha pasada: "+ visitList.size());
         for (int i = 0; i < visitList.size(); i++) {
             visitList.get(i).setStatus(Visit.PENDIENTE_FACTURA);
+            visitRepository.save(visitList.get(i));
         }
     }
 
@@ -38,7 +47,7 @@ public class VisitService {
     public List<Visit> listUnbilled(String customerId){
         return visitRepository.findByIdCustomerAndStatus(customerId, Visit.PENDIENTE_FACTURA);
     }
-
+/*
     public Visit setVisitBillLine(String visitId, String billLineId){
         Visit visit;
         Optional<Visit> optionalVisit=visitRepository.findById(visitId);
@@ -50,20 +59,16 @@ public class VisitService {
         }
         return null;
     }
-
-    public Visit findByBillLine(String billLineId){
-        Optional<Visit> optionalVisit=visitRepository.findByIdBillLine(billLineId);
-        if(optionalVisit.isPresent()){
-            return optionalVisit.get();
-        }
-        return null;
+*/
+    public List<Visit> findByBill(String billId){
+        return visitRepository.findByIdBill(billId);
     }
 
     public Visit save(Visit visit){
         return visitRepository.save(visit);
     }
 
-    public Visit findById(String id){
+    public Visit findById(Long id){
         Optional<Visit> optionalVisit=visitRepository.findById(id);
         if(optionalVisit.isPresent()){
             return optionalVisit.get();
@@ -87,7 +92,7 @@ public class VisitService {
     }
 
     public void delete(Visit visit){
-        Application a=eurekaClient.getApplication("BILLS");
+        Application a=eurekaClient.getApplication("BILL");
         String url=a.getInstances().get((int)(Math.random()*a.getInstances().size())).getHomePageUrl();
         ResponseEntity<String> response
                 = new RestTemplate().getForEntity(url+"/llamar", String.class);

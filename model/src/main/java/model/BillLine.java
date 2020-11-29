@@ -7,6 +7,6 @@ import lombok.Data;
 @Data @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class BillLine {
     private String id;
-    private String visitId;
+    private Long visitId;
     private float amount;
 }
