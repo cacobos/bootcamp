@@ -47,7 +47,7 @@ public class CustomerService {
 
 
     public List<Customer> findByState(String state){
-        List<Address> addressList=addressRepository.findByStateLike(state);
+        List<Address> addressList=addressRepository.findByStateContains(state);
         List<Customer> customers=new ArrayList<>();
         for (int i = 0; i < addressList.size(); i++) {
             customers.add(customerRepository.findById(addressList.get(i).getCustomerId()).get());

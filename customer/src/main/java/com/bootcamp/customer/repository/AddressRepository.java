@@ -8,5 +8,5 @@ import java.util.List;
 public interface AddressRepository extends JpaRepository<Address,Long> {
 
     List<Address> findByCustomerId(Long idCostumer);
-    List<Address> findByStateLike(String state);
+    List<Address> findByStateContains(String state);
 }

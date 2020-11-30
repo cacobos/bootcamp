@@ -1,7 +1,6 @@
 package com.bootcamp.payment.service;
 
 import com.bootcamp.payment.repository.PaymentRepository;
-import com.google.gson.Gson;
 import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.shared.Application;
 import model.Bill;
@@ -34,6 +33,14 @@ public class PaymentService {
 
     public Flux<Payment> findAll(){
         return paymentRepository.findAll();
+    }
+
+    public Mono<Payment> findById(String id){
+        return paymentRepository.findById(id);
+    }
+
+    public void deleteById(String id){
+        paymentRepository.deleteById(id);
     }
 
     public Mono<Payment> insert(Payment payment) {
